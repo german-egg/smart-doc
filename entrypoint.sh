@@ -49,9 +49,10 @@ elif [[ "$INPUT_FULL_REPO_WHEN_MISSING_DOCS" == "true" && "$docs_empty" == true 
 fi
 shopt -u nocasematch
 
+# Always continue to prompt/doc-updater. If there are no diffs and not in full-repo mode,
+# doc-updater will likely result in no changes; in full-repo cold start, it will scaffold.
 if [[ ! -s tmp/changed_files.txt && "$full_repo_mode" != true ]]; then
-  warn "No changed files detected. Nothing to document."
-  exit 0
+  warn "No changed files detected; proceeding (may result in no-op)."
 fi
 
 ## 3) Build prompt → tmp/prompt.md
