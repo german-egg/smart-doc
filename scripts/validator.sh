@@ -45,7 +45,8 @@ if [[ -n "$INPUT_PROMPT_TEMPLATE" && ! -f "$INPUT_PROMPT_TEMPLATE" ]]; then
   warn "INPUT_PROMPT_TEMPLATE not found: $INPUT_PROMPT_TEMPLATE"
 fi
 
-# Docs folder (ensure exists later by entrypoint; here we just log)
+# Keep validator side-effects minimal; scaffolding is now orchestrated by entrypoint via scripts/cold-start-scaffold.sh
+mkdir -p "$INPUT_DOCS_FOLDER"
 
 # Jira MCP auto-configuration
 # If JIRA_EMAIL, JIRA_API_TOKEN, and JIRA_DOMAIN are all set (non-empty),

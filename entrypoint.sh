@@ -26,6 +26,9 @@ mkdir -p "$INPUT_DOCS_FOLDER"
 ## 1) Validate environment and inputs
 bash "${GITHUB_ACTION_PATH:-.}/scripts/validator.sh"
 
+## 1b) Cold start scaffolding (early, idempotent)
+bash "${GITHUB_ACTION_PATH:-.}/scripts/cold-start-scaffold.sh" || true
+
 ## 2) Detect diffs (writes tmp/changed_files.txt and tmp/patch.diff)
 bash "${GITHUB_ACTION_PATH:-.}/scripts/diff-detector.sh"
 
