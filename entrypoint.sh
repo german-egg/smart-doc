@@ -29,8 +29,27 @@ bash "${GITHUB_ACTION_PATH:-.}/scripts/validator.sh"
 ## 2) Detect diffs (writes tmp/changed_files.txt and tmp/patch.diff)
 bash "${GITHUB_ACTION_PATH:-.}/scripts/diff-detector.sh"
 
-## Early exit if no changed files
-if [[ ! -s tmp/changed_files.txt ]]; then
+## Early exit unless full-repo mode is requested for cold start
+INPUT_FORCE_FULL_REPO=${INPUT_FORCE_FULL_REPO:-false}
+INPUT_FULL_REPO_WHEN_MISSING_DOCS=${INPUT_FULL_REPO_WHEN_MISSING_DOCS:-true}
+
+docs_empty=true
+if [[ -d "$INPUT_DOCS_FOLDER" ]]; then
+  if find "$INPUT_DOCS_FOLDER" -type f -not -name '.*' -maxdepth 2 | read -r _; then
+    docs_empty=false
+  fi
+fi
+
+full_repo_mode=false
+shopt -s nocasematch
+if [[ "$INPUT_FORCE_FULL_REPO" == "true" ]]; then
+  full_repo_mode=true
+elif [[ "$INPUT_FULL_REPO_WHEN_MISSING_DOCS" == "true" && "$docs_empty" == true ]]; then
+  full_repo_mode=true
+fi
+shopt -u nocasematch
+
+if [[ ! -s tmp/changed_files.txt && "$full_repo_mode" != true ]]; then
   warn "No changed files detected. Nothing to document."
   exit 0
 fi
